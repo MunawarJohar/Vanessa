@@ -1,0 +1,58 @@
+<!--
+  cal.com inline embed — reference snippet, not yet wired into index.html.
+
+  Setup on cal.com's side first:
+  1. Create two Event Types — one for the single 8-hour Saturday session,
+     one for the two-part 4-hour weekday sessions — each with "Offer Seats"
+     turned on (this gives you the "X spots left" counter automatically).
+  2. Install the Stripe app AND/OR the PayPal app on each event type
+     (App Store > Payments) and set the $95 price.
+  3. Grab your cal.com username and each event type's slug.
+
+  Then replace YOUR_USERNAME / YOUR_EVENT_SLUG below and swap this in for
+  the static .class-list markup in index.html and reschedule.html.
+-->
+<script type="text/javascript">
+  (function (C, A, L) {
+    let p = function (a, ar) { a.q.push(ar); };
+    let d = C.document;
+    C.Cal = C.Cal || function () {
+      let cal = C.Cal;
+      let ar = arguments;
+      if (!cal.loaded) {
+        cal.ns = {};
+        cal.q = cal.q || [];
+        d.head.appendChild(d.createElement("script")).src = A;
+        cal.loaded = true;
+      }
+      if (ar[0] === L) {
+        const api = function () { p(api, arguments); };
+        const namespace = ar[1];
+        api.q = api.q || [];
+        if (typeof namespace === "string") {
+          cal.ns[namespace] = cal.ns[namespace] || api;
+          p(cal.ns[namespace], ar);
+          p(cal, ["initNamespace", namespace]);
+        } else p(cal, ar);
+        return;
+      }
+      p(cal, ar);
+    };
+  })(window, "https://app.cal.com/embed/embed.js", "init");
+
+  Cal("init", { origin: "https://cal.com" });
+
+  Cal("inline", {
+    elementOrSelector: "#cal-booking-embed",
+    calLink: "YOUR_USERNAME/YOUR_EVENT_SLUG",
+    config: { theme: "light" },
+  });
+
+  Cal("ui", {
+    styles: { branding: { brandColor: "#111111" } },
+    hideEventTypeDetails: false,
+    layout: "month_view",
+  });
+</script>
+
+<div id="cal-booking-embed" style="width:100%; min-height:600px;"></div>
